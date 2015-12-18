@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class UIColor;
-@class UIView;
 
 @protocol LTSegmentedControlDelegate <NSObject>
 
@@ -31,8 +32,16 @@
 @property (nonatomic, strong) UIColor *titleColor;
 
 @property (nonatomic, weak) id<LTSegmentedControlDelegate> segmentDelegate;
+/// a indicatorView for custom
+@property (nonatomic, strong) UIView *indicatorView;
 
 - (instancetype)initWithItems:(NSArray<NSString *>*) items;
 
-
 @end
+
+@interface LTSegmentedControl (IndicatorView)
+- (UIView *)topLineIndicatorView;
+- (UIView *)bottomLineIndicatorView;
+@end
+
+NS_ASSUME_NONNULL_END

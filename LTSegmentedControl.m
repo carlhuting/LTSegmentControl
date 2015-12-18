@@ -9,7 +9,7 @@
 #import "LTSegmentedControl.h"
 
 @interface LTSegmentedControl ()
-@property (nonatomic, strong) UIView *indicatorView;
+
 @end
 
 @implementation LTSegmentedControl
@@ -23,23 +23,14 @@
     return self;
 }
 
-- (UIView *)indicatorView {
-    if (!_indicatorView) {
-        _indicatorView = [[UIView alloc] init];
-        _indicatorView.backgroundColor = [UIColor greenColor];
-        _indicatorView.alpha = 0.5;
-    }
-    return _indicatorView;
-}
-
 - (NSUInteger)numberOfSegments {
     return self.items.count;
 }
 
 - (void)setupUI {
     _lineSpace = 2;
-    _minWidth = 60;
-    _titleColor = [UIColor blackColor];
+    _minWidth = 2;
+    _titleColor = self.tintColor;
     _hightlightColor = [UIColor darkTextColor];
     self.backgroundColor = [UIColor lightGrayColor];
     
@@ -53,7 +44,19 @@
         [self addSubview:btn];
         btn.tag = idx + 100;
     }];
-    [self addSubview:self.indicatorView];
+    self.indicatorView = [self bottomLineIndicatorView];
+    self.contentInset = UIEdgeInsetsMake(2, 0, 2, 0);
+}
+
+- (void)setIndicatorView:(UIView *)indicatorView {
+    if (_indicatorView == indicatorView) {
+        return ;
+    }
+    if (!_indicatorView) {
+        [_indicatorView removeFromSuperview];
+    }
+    _indicatorView = indicatorView;
+    [self addSubview:indicatorView];
 }
 
 - (void)tapped:(UIButton *)sender {
@@ -75,6 +78,7 @@
     [UIView animateWithDuration:.23 animations:^{
         self.indicatorView.frame = frame;
     }];
+    
     CGFloat maxoffset = self.contentSize.width - self.bounds.size.width;
     if (!self.scrollEnabled || (maxoffset <= 3.0)) {
         return ;
@@ -109,7 +113,9 @@
         UIButton * btn = (UIButton *)self.subviews[index];
         [btn sizeToFit];
         CGFloat width = MAX(CGRectGetWidth(btn.bounds), self.minWidth);
-       // width = MIN(width, self.maxWidth);
+        if (self.maxWidth > self.minWidth) {
+            width = MIN(width, self.maxWidth);
+        }
         btn.frame = CGRectMake(contentWidth, self.bounds.origin.y, width, self.bounds.size.height);
         contentWidth += width + self.lineSpace;
     }
@@ -117,6 +123,40 @@
     UIButton *current = (UIButton *)self.subviews[self.selectedSegmentIndex];
     CGRect frame = current.frame;
     self.indicatorView.frame = frame;
+}
+
+@end
+
+@implementation LTSegmentedControl(Indictor)
+
+- (UIView *)topLineIndicatorView {
+    UIView *indicatorView = [[UIView alloc] init];
+    indicatorView.backgroundColor = [UIColor clearColor];
+    UIView *lineView = [[UIView alloc] init];
+    lineView.backgroundColor = self.tintColor;
+    lineView.translatesAutoresizingMaskIntoConstraints = NO;
+    [indicatorView addSubview:lineView];
+        
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeWidth multiplier:.9 constant:0]];
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeTop multiplier:.9 constant:0]];
+    [lineView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:2]];
+    return indicatorView;
+}
+
+- (UIView *)bottomLineIndicatorView {
+    UIView *indicatorView = [[UIView alloc] init];
+    indicatorView.backgroundColor = [UIColor clearColor];
+    UIView *lineView = [[UIView alloc] init];
+    lineView.backgroundColor = self.tintColor;
+    lineView.translatesAutoresizingMaskIntoConstraints = NO;
+    [indicatorView addSubview:lineView];
+    
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeWidth multiplier:.9 constant:0]];
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeCenterX multiplier:1.0 constant:0]];
+    [indicatorView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:indicatorView attribute:NSLayoutAttributeBottom multiplier:.9 constant:2.5]];
+    [lineView addConstraint:[NSLayoutConstraint constraintWithItem:lineView attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:2]];
+    return indicatorView;
 }
 
 @end
