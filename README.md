@@ -25,6 +25,12 @@ Included is a demo project showing how to fully customise the control.
 - Add `LTSegmentControl.h` and `LTSegmentControl.m` to your project.
 - `#import "LTSegmentControl.h"` where you want to add the control.
 
+## CocoaPods
+
+``` ruby
+pod LTSegmentControl
+```
+
 # License
 
 LTSegmentedControl is licensed under the terms of the Apache License. Please see the [LICENSE](LICENSE.md) file for full details.
